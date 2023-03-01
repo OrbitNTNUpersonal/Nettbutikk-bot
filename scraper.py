@@ -5,12 +5,13 @@ from webdriver_manager.chrome import ChromeDriverManager
 from bs4 import BeautifulSoup
 from dotenv import load_dotenv
 import os 
+import csv
+import time # to be deleted
+import requests
 
 # Initialise driver
 options = Options()
-#options.add_experimental_option("detach", True)
 options.add_argument("--headless=new")
-options
 driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()),
                           options=options)
 
@@ -39,5 +40,21 @@ latest_item_name = latest_item.find('h2').get_text()
 latest_item_link = latest_item.find('a').get('href')
 print("link to",latest_item_name, ":", latest_item_link)
 
+# CSV writing to test cron, to be deleted
+with open('/Users/shezadhassan/Desktop/test.csv', 'a') as f:
+    writer = csv.writer(f)
+    time = time.ctime()
+    towrite = [time + latest_item_name]
+    writer.writerow(towrite)
+
 # Close web driver
 driver.quit()
+
+# Slack message
+slack_address = 'https://hooks.slack.com/services/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'
+payload = '{"text": "%s"}' % latest_item_name
+response = requests.post(
+    slack_address,
+    data = payload
+)
+print(response.text)
