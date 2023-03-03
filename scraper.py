@@ -10,12 +10,6 @@ import time # to be deleted
 import requests
 import pickle
 
-# Item class
-class Item:
-    def __init__(self, name, link) -> None:
-        self.name = name
-        self.link = link
-
 def findNewItems(prev_list, new_list):
     '''
     prev_list : Last pulled list.
@@ -46,18 +40,16 @@ driver.find_element("name", "feidename").send_keys(username)
 driver.find_element("name", "password").send_keys(password)
 driver.find_element("xpath", '//button[@type="submit"]').click()
 
-# Get list
-count_element = driver.find_element("xpath", '//p[@class="woocommerce-result-count"]').text
-count = ''.join(filter(str.isdigit, count_element)) # Extract count
-print("There are", int(count), "items")
-
-# Get new item
+# Get list of items in html format
 items_list = driver.find_element("xpath", '//ul[@class="products columns-5"]') 
 items_list = items_list.get_attribute("innerHTML") # Get list of postings in html format
 soup = BeautifulSoup(items_list, 'html.parser') # Create soup object for easy parsing
 items_html = soup.find_all('li') # Get array of items on nettbutikk
 
-# get list of curr_list   maybe use dict instead of list
+# Close web driver
+driver.quit()
+
+# Parse html list and store items in dictionary
 curr_items = {}
 for item in items_html:
     item_name = item.find('h2').get_text()
@@ -73,9 +65,10 @@ with open("data.pickle", "rb") as f:
         prev_items = {}
         print("Prev list reset to empty")
 
+# Exctract list of new items
 new_items = findNewItems(prev_items, curr_items)
-# if prev_list = curr_list do nothing
-# if curr_list has new item then 1. send slack message 1. update llist in db
+
+# if curr_list has new items then 1. send slack message 2. update llist in db
 if new_items != None:
     # Slack message
     slack_address = 'https://hooks.slack.com/services/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'
@@ -90,20 +83,3 @@ if new_items != None:
     # Write new list to db
     with open("data.pickle", "wb") as f:
         pickle.dump(curr_items, f)
-
-# Close web driver
-driver.quit()
-
-
-'''
-# Write last item to db
-path_to_db = "/Users/shezadhassan/Desktop/Orbital/Nettbutikk Webscraper/nettbutikk-webscraper/database.csv"
-with open(path_to_db, 'w') as f:
-    writer = csv.writer(f)
-    time = time.ctime()
-    #towrite = latest_item_name
-    writer.writerow([items])
-    writer.writerow([time])
-
-
-'''
