@@ -69,7 +69,7 @@ new_items = findNewItems(prev_items, curr_items)
 # If curr_list has new items then send slack message and update db with curr_items
 if new_items != None:
     # Slack message
-    slack_address = 'https://hooks.slack.com/services/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'
+    slack_address = os.environ.get('SLACK_ADDRESS')
     for i in new_items:
         payload = '{"text": "A new %s has been posted at %s"}' % (new_items[i], i)
         response = requests.post(
