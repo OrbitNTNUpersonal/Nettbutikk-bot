@@ -56,14 +56,14 @@ for item in items_html:
     item_link = item.find('a').get('href')
     curr_items[item_link] = item_name
     
-# Pull prev list from pickle database
+# Pull prevopusly checked list of items from pickle database
 with open("data.pickle", "rb") as f:
     try:
         prev_items = pickle.load(f)
     except:
         prev_items = {}
 
-# Exctract list of new items
+# Exctract list of new items by comparing previously pulled list with current list of items
 new_items = findNewItems(prev_items, curr_items)
 
 # If curr_list has new items then send slack message and update db with curr_items
