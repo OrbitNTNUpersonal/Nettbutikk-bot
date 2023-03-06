@@ -15,7 +15,6 @@ def findNewItems(prev_list, new_list):
     prev_list : Last pulled list.
     new_list : Currently pulled list from the website. 
     
-
     Returns items in new_list that are not in prev_list. If there are no new items return None. 
     '''
     new_items = {}
