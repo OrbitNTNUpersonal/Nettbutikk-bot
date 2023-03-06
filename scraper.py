@@ -43,7 +43,7 @@ driver.find_element("xpath", '//button[@type="submit"]').click()
 items_list = driver.find_element("xpath", '//ul[@class="products columns-5"]') 
 items_list = items_list.get_attribute("innerHTML") # Get list of postings in html format
 soup = BeautifulSoup(items_list, 'html.parser') # Create soup object for easy parsing
-items_html = soup.find_all('li') # Get array of items on nettbutikk
+items_html = soup.find_all('li') # Get array of items on nettbutikk 
 
 # Close web driver
 driver.quit()
